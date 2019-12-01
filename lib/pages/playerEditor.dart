@@ -46,79 +46,84 @@ class _PlayerEditorPage extends State<PlayerEditorPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('FairTeams'),
-          elevation: 0.0,
-        ),
-        body: new Column(children: <Widget>[
-          /// The expander for the ListView
-          new Expanded(
-              child: new ListView.builder(
-                  itemCount: players.length + 1,
-                  itemBuilder: (context, position) {
-                    if (position == players.length) {
-                      return players.length == 0
-                          ? Column(
-                        children: <Widget>[
-                          TextField(
-                              onSubmitted: (newValue) {
-                                SqliteDatabaseHelper instance = SqliteDatabaseHelper.instance;
-                                instance.insertPlayer(newValue, groupId);
+      appBar: new AppBar(
+        title: new Text('FairTeams'),
+        elevation: 0.0,
+      ),
+      body: new Column(children: <Widget>[
+        /// The expander for the ListView
+        new Expanded(
+            child: new ListView.builder(
+                itemCount: players.length + 1,
+                itemBuilder: (context, position) {
+                  if (position == players.length) {
+                    return players.length == 0
+                        ? Column(
+                            children: <Widget>[
+                              TextField(
+                                  onSubmitted: (newValue) {
+                                    SqliteDatabaseHelper instance =
+                                        SqliteDatabaseHelper.instance;
+                                    instance.insertPlayer(newValue, groupId);
 
+                                    _readPlayers();
+                                  },
+                                  textInputAction: TextInputAction.done,
+                                  maxLines: 1,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Name')),
+                            ],
+                          )
+                        : TextField(
+                            onSubmitted: (newValue) {
+                              SqliteDatabaseHelper instance =
+                                  SqliteDatabaseHelper.instance;
+                              instance.insertPlayer(newValue, groupId);
 
-                                _readPlayers();
-                              },
-                              textInputAction: TextInputAction.done,
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Name')),
-                        ],
-                      )
-                          : TextField(
-                          onSubmitted: (newValue) {
-                            SqliteDatabaseHelper instance = SqliteDatabaseHelper.instance;
-                            instance.insertPlayer(newValue, groupId);
+                              _readPlayers();
+                            },
+                            textInputAction: TextInputAction.done,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Name'));
+                  }
 
+                  final item = GestureDetector(
+                      child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.04,
+                          child: Text(
+                            players[position].name,
+                            style: TextStyle(fontSize: 22.0),
+                          )),
+                    ),
+                  ));
+                  return Dismissible(
+                      key: Key(players[position].playerId.toString()),
+                      child: item,
+                      onDismissed: (direction) {
+                        SqliteDatabaseHelper instance =
+                            SqliteDatabaseHelper.instance;
+                        instance.deletePlayer(players[position].playerId);
 
-                            _readPlayers();
-                          },
-                          textInputAction: TextInputAction.done,
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Name'));
-                    }
-
-                    final item = GestureDetector(
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height *0.04,
-                                child: Text(
-                                  players[position].name,
-                                  style: TextStyle(fontSize: 22.0),
-                                )
-                            ),
-                          ),
-                        ));
-                    return Dismissible(
-                        key: Key(players[position].playerId.toString()),
-                        child: item,
-                        onDismissed: (direction) {
-                          SqliteDatabaseHelper instance = SqliteDatabaseHelper.instance;
-                          instance.deletePlayer(players[position].playerId);
-
-                          _readPlayers();
-                          //Dirty workaround
-                          players.removeLast();
-
-                        },
-                        // Show a red background as the item is swiped away.
-                        background: Container(color: Colors.red));
-                  }))
-        ]));
+                        _readPlayers();
+                        //Dirty workaround
+                        players.removeLast();
+                      },
+                      // Show a red background as the item is swiped away.
+                      background: Container(color: Colors.red));
+                }))
+      ]),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: () => {},
+        tooltip: 'Create teams',
+        child: Icon(Icons.chevron_right),
+      ),
+    );
   }
 }
