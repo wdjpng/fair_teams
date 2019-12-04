@@ -19,6 +19,8 @@ environment:
 dependencies:
   sqflite: ^1.0.0
   path_provider: any
+  trotter: 1.0.2
+  rflutter_alert: ^1.0.2
 
   flutter:
     sdk: flutter

@@ -120,6 +120,9 @@ class _GroupSelectorPage extends State<GroupSelectorPage> {
                           instance.deletePlayerByGroupId(groups[position].groupId);
 
                           _readGroups();
+
+                          //Dirty workaround
+                          groups.removeLast();
                         },
                         // Show a red background as the item is swiped away.
                         background: Container(color: Colors.red));
